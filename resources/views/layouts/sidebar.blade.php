@@ -54,6 +54,21 @@
       <span>Laporan</span>
     </a>
   </li>
+   <li class="nav-item">
+    <a class="nav-link" href="{{ url('/laporan') }}">
+      <i class="fas fa-fw fa-file-alt"></i>
+      <span>Laporan Harian</span>
+    </a>
+     <li class="nav-item">
+    <a class="nav-link" href="{{ url('/laporan') }}">
+      <i class="fas fa-fw fa-file-alt"></i>
+      <span>Laporan Bulan</span>
+       <li class="nav-item">
+    <a class="nav-link" href="{{ url('/laporan') }}">
+      <i class="fas fa-fw fa-file-alt"></i>
+      <span>Laporan Tahun</span>
+    </a>
+    </a>
   @endif
 
   <hr class="sidebar-divider d-none d-md-block">
