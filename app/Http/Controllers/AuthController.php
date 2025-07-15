@@ -21,8 +21,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             // Jika berhasil login, cek role-nya
             if (Auth::user()->role === 'pemilik') {
-                return redirect('/laporan'); // redirect ke laporan kalau pemilik
-            } else {
+                return redirect()->route('pemilik.dashboard');
+            }
+                else {
                 return redirect('/dashboard'); // redirect ke dashboard kasir
             }
         }

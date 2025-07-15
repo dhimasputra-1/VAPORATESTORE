@@ -7,7 +7,7 @@
   <div class="col-lg-5">
     <div class="card shadow-lg border-0 rounded-lg">
       <div class="card-header text-center">
-        <h4 class="text-primary font-weight-bold">Login Kasir Vape Store</h4>
+        <h4 class="text-primary font-weight-bold">Selamat Datang</h4>
       </div>
       <div class="card-body">
         @if(session('error'))

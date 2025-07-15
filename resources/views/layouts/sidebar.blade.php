@@ -26,6 +26,13 @@
   </li>
 
   <li class="nav-item">
+    <a class="nav-link" href="{{ url('/categories') }}">
+      <i class="fas fa-fw fa-box"></i>
+      <span>Kategori</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
     <a class="nav-link" href="{{ url('/suppliers') }}">
       <i class="fas fa-fw fa-truck"></i>
       <span>Supplier</span>

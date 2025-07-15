@@ -40,5 +40,6 @@
       <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" required>
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{{ route('products.index') }}" class="btn btn-secondary">Kembali</a>
   </form>
 @endsection

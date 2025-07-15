@@ -46,10 +46,10 @@
           <div class="form-group mb-4">
             <label>Role</label>
             <select name="role" class="form-control" required>
-  <option value="">-- Pilih Role --</option>
-  <option value="pemilik" {{ old('role') == 'pemilik' ? 'selected' : '' }}>Pemilik</option>
-  <option value="kasir" {{ old('role') == 'kasir' ? 'selected' : '' }}>Kasir</option>
-</select>
+              <option value="">-- Pilih Role --</option>
+              <option value="pemilik" {{ old('role') == 'pemilik' ? 'selected' : '' }}>Pemilik</option>
+              <option value="kasir" {{ old('role') == 'kasir' ? 'selected' : '' }}>Kasir</option>
+            </select>
           </div>
 
           <button type="submit" class="btn btn-primary w-100">Register</button>

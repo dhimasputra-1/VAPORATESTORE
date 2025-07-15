@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Supplier')
+@section('title', 'Edit Supplier')
 
 @section('content')
-  <h1 class="h3 mb-4 text-gray-800">Tambah Supplier</h1>
+  <h1 class="h3 mb-4 text-gray-800">Edit Supplier</h1>
 
-  {{-- Tampilkan error validasi jika ada --}}
   @if ($errors->any())
     <div class="alert alert-danger">
       <ul>
@@ -16,25 +15,26 @@
     </div>
   @endif
 
-  {{-- Form Tambah Supplier --}}
-  <form action="{{ route('suppliers.store') }}" method="POST">
+  <form action="{{ route('suppliers.update', $supplier->id) }}" method="POST">
     @csrf
+    @method('PUT')
+
     <div class="mb-3">
       <label for="supplier_name" class="form-label">Nama Supplier</label>
-      <input type="text" name="supplier_name" class="form-control" value="{{ old('supplier_name') }}" required>
+      <input type="text" name="supplier_name" class="form-control" value="{{ $supplier->supplier_name }}" required>
     </div>
 
     <div class="mb-3">
       <label for="phone" class="form-label">Telepon</label>
-      <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" required>
+      <input type="text" name="phone" class="form-control" value="{{ $supplier->phone }}" required>
     </div>
 
     <div class="mb-3">
       <label for="address" class="form-label">Alamat</label>
-      <textarea name="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+      <textarea name="address" class="form-control" rows="3" required>{{ $supplier->address }}</textarea>
     </div>
 
-    <button type="submit" class="btn btn-success">Simpan</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     <a href="{{ route('suppliers.index') }}" class="btn btn-secondary">Kembali</a>
   </form>
 @endsection

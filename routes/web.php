@@ -7,6 +7,9 @@ use App\Http\Controllers\TransactionWebController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanWebController;
+use App\Http\Controllers\DashboardKasirController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PemilikDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +19,6 @@ use App\Http\Controllers\LaporanWebController;
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
 Route::get('/register', [AuthController::class, 'showRegister']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -25,9 +27,7 @@ Route::post('/register', [AuthController::class, 'register']);
 | Public Route
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => view('welcome'));
 
 /*
 |--------------------------------------------------------------------------
@@ -35,23 +35,20 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:kasir'])->group(function () {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('kasir.dashboard');
+    Route::get('/dashboard', [DashboardKasirController::class, 'index'])->name('kasir.dashboard');
 
     // Produk
-    Route::resource('/products', ProductWebController::class)->except(['show']);
+    Route::resource('products', ProductWebController::class)->except(['show']);
+    Route::get('/ajax/products', [ProductWebController::class, 'ajaxProducts'])->name('products.ajax');
 
     // Supplier
-    Route::get('/suppliers', [SupplierWebController::class, 'index'])->name('suppliers.index');
-    Route::get('/suppliers/create', [SupplierWebController::class, 'create'])->name('suppliers.create');
-    Route::post('/suppliers', [SupplierWebController::class, 'store'])->name('suppliers.store');
+    Route::resource('suppliers', SupplierWebController::class)->except(['show']);
 
     // Transaksi
-    Route::get('/transactions', [TransactionWebController::class, 'index'])->name('transactions.index');
-    Route::get('/transactions/create', [TransactionWebController::class, 'create'])->name('transactions.create');
-    Route::post('/transactions', [TransactionWebController::class, 'store'])->name('transactions.store');
-
-    // Struk (Static view)
-    Route::view('/struk', 'transactions.struk')->name('transactions.struk');
+    Route::resource('transactions', TransactionWebController::class)->except(['show']);
+    Route::get('/transactions/{id}/struk', [TransactionWebController::class, 'struk'])->name('transactions.struk');
+    Route::get('/transactions/{id}/payment', [TransactionWebController::class, 'payment'])->name('transactions.payment');
+    Route::post('/transactions/{id}/payment-process', [TransactionWebController::class, 'paymentProcess'])->name('transactions.paymentProcess');
 });
 
 /*
@@ -60,21 +57,38 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:pemilik'])->group(function () {
-    // Laporan
+    Route::get('/pemilik/dashboard', function () {
+        return view('dashboard_pemilik');
+    })->name('pemilik.dashboard');
     Route::get('/laporan', [LaporanWebController::class, 'index'])->name('laporan.index');
+
+    // Laporan
     Route::get('/laporan/harian', [LaporanWebController::class, 'harian'])->name('laporan.harian');
+    Route::get('/laporan/harian/cetak', [LaporanWebController::class, 'cetakHarian'])->name('laporan.harian.cetak');
+
     Route::get('/laporan/bulanan', [LaporanWebController::class, 'bulanan'])->name('laporan.bulanan');
+    Route::get('/laporan/bulanan/cetak', [LaporanWebController::class, 'cetakBulanan'])->name('laporan.bulanan.cetak');
+
     Route::get('/laporan/tahunan', [LaporanWebController::class, 'tahunan'])->name('laporan.tahunan');
+    Route::get('/laporan/tahunan/cetak', [LaporanWebController::class, 'cetakTahunan'])->name('laporan.tahunan.cetak');
 
     // Manajemen User
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
-});
+});    
 
 /*
 |--------------------------------------------------------------------------
-| Unauthorized Page (fallback)
+| Kategori Route (Kasir & Pemilik)
 |--------------------------------------------------------------------------
 */
-Route::get('/unauthorized', function () {
-    return view('unauthorized');
-})->name('unauthorized');
+Route::resource('categories', CategoryController::class);
+
+/*
+|--------------------------------------------------------------------------
+| Unauthorized Page
+|--------------------------------------------------------------------------
+*/
+Route::get('/unauthorized', fn() => view('unauthorized'))->name('unauthorized');
+
+Route::get('/dashboard-pemilik', [PemilikDashboardController::class, 'index'])->name('pemilik.dashboard')->middleware('auth');
+
