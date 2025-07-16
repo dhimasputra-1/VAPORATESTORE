@@ -45,6 +45,7 @@
             <th>Supplier</th>
             <th>Harga</th>
             <th>Stok</th>
+            <th>Gambar</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -56,6 +57,13 @@
               <td>{{ $product->supplier->supplier_name ?? '-' }}</td>
               <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
               <td>{{ $product->stock }}</td>
+              <td>
+                @if($product->image)
+                  <img src="{{ asset('storage/'.$product->image) }}" width="60">
+                @else
+                  <span class="text-muted">-</span>
+                @endif
+              </td>
               <td>
                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning" title="Edit Produk">
                   <i class="bi bi-pencil-square"></i>

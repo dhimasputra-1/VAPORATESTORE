@@ -32,17 +32,23 @@ class ProductWebController extends Controller
     // Simpan produk baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'product_name' => 'required|string|max:255',
-            'category_id'  => 'required|exists:categories,id',
-            'supplier_id'  => 'required|exists:suppliers,id',
-            'price'        => 'required|numeric|min:0',
-            'stock'        => 'required|integer|min:0'
-        ]);
+    $validated = $request->validate([
+        'product_name' => 'required|string|max:255',
+        'category_id'  => 'required|exists:categories,id',
+        'supplier_id'  => 'required|exists:suppliers,id',
+        'price'        => 'required|numeric|min:0',
+        'stock'        => 'required|integer|min:0',
+        'image'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        Product::create($validated);
-        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
+    if ($request->hasFile('image')) {
+        $validated['image'] = $request->file('image')->store('products', 'public');
     }
+
+    Product::create($validated);
+    return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
+    }
+
 
     // Form edit produk
     public function edit($id)
@@ -54,20 +60,27 @@ class ProductWebController extends Controller
     }
 
     // Update produk
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'category_id'  => 'required|exists:categories,id',
             'supplier_id'  => 'required|exists:suppliers,id',
             'price'        => 'required|numeric|min:0',
-            'stock'        => 'required|integer|min:0'
+            'stock'        => 'required|integer|min:0',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
 
         $product->update($validated);
         return redirect()->route('products.index')->with('success', 'Produk berhasil diupdate!');
     }
+
 
     // Hapus produk
     public function destroy($id)
