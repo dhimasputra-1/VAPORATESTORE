@@ -27,7 +27,7 @@
     <form action="{{ route('transactions.paymentProcess', $transaction->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        {{-- === Pilihan VA === --}}
+        {{-- Pilihan VA atau E-Wallet --}}
         @if($transaction->payment_method == 'transfer')
         <h5>Pilih Bank Virtual Account</h5>
         @php $banks = ['BCA'=>'014', 'BNI'=>'009', 'BRI'=>'002', 'Mandiri'=>'008', 'CIMB Niaga'=>'022', 'Permata Bank'=>'013']; @endphp
@@ -52,12 +52,14 @@
         {{-- Nomor VA --}}
         <div id="va-result" class="mb-4"></div>
 
-        {{-- QRIS Section --}}
-        <h5>Pembayaran via QRIS (opsional)</h5>
+        {{-- QRIS (Simulasi Pembayaran) --}}
+        <h5>Pembayaran via QR (Simulasi)</h5>
         <div class="text-center mb-4">
-            <img id="qris-image" src="https://api.qrserver.com/v1/create-qr-code/?data=DefaultQR&size=200x200" alt="QRIS"
-                style="max-width:200px; border:1px solid #ccc; padding:5px;">
-            <p class="mt-2">Scan QR untuk pembayaran via QRIS</p>
+            <img id="qris-image"
+                 src="https://api.qrserver.com/v1/create-qr-code/?data=DefaultQR&size=200x200"
+                 alt="QRIS"
+                 style="max-width:200px; border:1px solid #ccc; padding:5px;">
+            <p class="mt-2">Scan QR ini untuk melihat info simulasi pembayaran</p>
         </div>
 
         {{-- Bukti Transfer --}}
@@ -69,35 +71,51 @@
         <button type="submit" class="btn btn-success">Selesaikan Pembayaran</button>
         <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
-
 </div>
 @endsection
 
 @push('scripts')
 <script>
-$(document).ready(function(){
-    $('#payment_channel').on('change', function(){
-        let selected = $(this).find('option:selected').val();
-        let code = $(this).find('option:selected').data('code');
-        let transactionId = {{ $transaction->id }};
-        let random = Math.floor(1000 + Math.random() * 9000);
+$(document).ready(function () {
+    const products = [
+        @foreach($transaction->details as $detail)
+            {
+                name: "{{ $detail->product->product_name }}",
+                qty: {{ $detail->quantity }},
+            },
+        @endforeach
+    ];
 
-        // Nomor VA
-        let vaHtml = `
+    $('#payment_channel').on('change', function () {
+        const selected = $(this).find('option:selected').val();
+        const code = $(this).find('option:selected').data('code');
+        const transactionId = {{ $transaction->id }};
+        const transactionCode = "{{ $transaction->transaction_code }}";
+        const total = {{ $transaction->total_price }};
+        const method = "{{ strtoupper($transaction->payment_method) }}";
+        const random = Math.floor(1000 + Math.random() * 9000);
+        const nomorVA = `${code}${transactionId}${random}`;
+        const formattedTotal = new Intl.NumberFormat('id-ID').format(total);
+
+        $('#va-result').html(`
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between">
                     Virtual Account ${selected}
-                    <span>${code}${transactionId}${random}</span>
+                    <span>${nomorVA}</span>
                 </li>
             </ul>
-        `;
-        $('#va-result').html(vaHtml);
+        `);
 
-        // Generate QR dinamis via API
-        let qrData = `${selected}-${code}${transactionId}${random}`;
-        let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=200x200`;
+        // Ringkasan Produk
+        const produkSummary = products.map(p => `${p.name}x${p.qty}`).join(', ');
+
+        // Isi QR Singkat
+        const qrText = `TRX: ${transactionCode} | ${produkSummary} | Total: Rp${formattedTotal} | VA: ${nomorVA}`;
+
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrText)}&size=200x200`;
         $('#qris-image').attr('src', qrUrl);
     });
 });
+
 </script>
 @endpush
