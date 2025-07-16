@@ -1,13 +1,13 @@
-<!-- Topbar Navbar -->
-<div class="d-flex justify-content-between align-items-center w-100 px-3">
-  <!-- User Name (kiri) -->
-  <div class="text-gray-600 small font-weight-bold text-capitalize">
-  </div>
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+    <div class="d-flex justify-content-between w-100 px-3">
+        {{-- User Info --}}
+        <span class="text-gray-800 small font-weight-bold">
+            {{ Auth::user()->name }} ({{ ucfirst(Auth::user()->role) }})
+        </span>
 
-  <!-- Logout Button (kanan) -->
-  <div>
-    <a class="btn btn-sm btn-danger" href="/logout">
-      Logout
-    </a>
-  </div>
-</div>
+        {{-- Logout --}}
+        <a class="btn btn-sm btn-danger" href="/logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</nav>
