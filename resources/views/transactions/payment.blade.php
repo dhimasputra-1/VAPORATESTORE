@@ -53,7 +53,6 @@
         <div id="va-result" class="mb-4"></div>
 
         {{-- QRIS (Simulasi Pembayaran) --}}
-        <h5>Pembayaran via QR (Simulasi)</h5>
         <div class="text-center mb-4">
             <img id="qris-image"
                  src="https://api.qrserver.com/v1/create-qr-code/?data=DefaultQR&size=200x200"
@@ -77,26 +76,23 @@
 @push('scripts')
 <script>
 $(document).ready(function () {
-    const products = [
-        @foreach($transaction->details as $detail)
-            {
-                name: "{{ $detail->product->product_name }}",
-                qty: {{ $detail->quantity }},
-            },
-        @endforeach
-    ];
+    const transactionId = {{ $transaction->id }};
+    const total = {{ $transaction->total_price }};
+    const formattedTotal = new Intl.NumberFormat('id-ID').format(total);
 
+    // Default QR saat pertama load halaman
+    const defaultQrText = `Total: Rp${formattedTotal} | Pilih metode pembayaran`;
+    const defaultQrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(defaultQrText)}&size=200x200`;
+    $('#qris-image').attr('src', defaultQrUrl);
+
+    // Saat metode pembayaran dipilih
     $('#payment_channel').on('change', function () {
         const selected = $(this).find('option:selected').val();
         const code = $(this).find('option:selected').data('code');
-        const transactionId = {{ $transaction->id }};
-        const transactionCode = "{{ $transaction->transaction_code }}";
-        const total = {{ $transaction->total_price }};
-        const method = "{{ strtoupper($transaction->payment_method) }}";
-        const random = Math.floor(1000 + Math.random() * 9000);
+        const random = Math.floor(1000 + Math.random() * 9000); // 4 digit random
         const nomorVA = `${code}${transactionId}${random}`;
-        const formattedTotal = new Intl.NumberFormat('id-ID').format(total);
 
+        // Tampilkan Virtual Account
         $('#va-result').html(`
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between">
@@ -106,16 +102,12 @@ $(document).ready(function () {
             </ul>
         `);
 
-        // Ringkasan Produk
-        const produkSummary = products.map(p => `${p.name}x${p.qty}`).join(', ');
-
-        // Isi QR Singkat
-        const qrText = `TRX: ${transactionCode} | ${produkSummary} | Total: Rp${formattedTotal} | VA: ${nomorVA}`;
-
+        // Update QR
+        const qrText = `Pembayaran ${selected}\nVA: ${nomorVA}\nTotal: Rp${formattedTotal}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrText)}&size=200x200`;
         $('#qris-image').attr('src', qrUrl);
     });
 });
-
 </script>
 @endpush
+
