@@ -80,12 +80,7 @@
         </div>
     </div>
 
-    {{-- Tombol Laporan --}}
-    <div class="mt-4">
-        <a href="{{ route('laporan.harian') }}" class="btn btn-primary">Laporan Harian</a>
-        <a href="{{ route('laporan.bulanan') }}" class="btn btn-success">Laporan Bulanan</a>
-        <a href="{{ route('laporan.tahunan') }}" class="btn btn-warning">Laporan Tahunan</a>
-    </div>
+   
 </div>
 @endsection
 

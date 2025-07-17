@@ -14,7 +14,7 @@
 
   </div>
 
-  <div class="card shadow-sm">cls
+  <div class="card shadow-sm">
     <div class="card-body table-responsive">
       <table class="table table-hover table-bordered">
         <thead class="table-primary">
