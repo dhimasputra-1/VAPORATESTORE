@@ -12,66 +12,78 @@
 
     {{-- Dashboard --}}
     <li class="nav-item">
-        <a class="nav-link" href="{{ url('/dashboard') }}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
+        @if(Auth::user()->role === 'kasir')
+            <a class="nav-link" href="{{ url('/dashboard') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        @elseif(Auth::user()->role === 'pemilik')
+            <a class="nav-link" href="{{ url('/pemilik/dashboard') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        @endif
     </li>
 
-    {{-- Kasir Section --}}
+    {{-- Menu Khusus Kasir --}}
     @if(Auth::user()->role === 'kasir')
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Data Master</div>
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Data Master</div>
 
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/products') }}">
-            <i class="fas fa-fw fa-box"></i>
-            <span>Produk</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/categories') }}">
-            <i class="fas fa-fw fa-tags"></i>
-            <span>Kategori</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/suppliers') }}">
-            <i class="fas fa-fw fa-truck"></i>
-            <span>Supplier</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/transactions') }}">
-            <i class="fas fa-fw fa-receipt"></i>
-            <span>Transaksi</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/products') }}">
+                <i class="fas fa-fw fa-box"></i>
+                <span>Produk</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/categories') }}">
+                <i class="fas fa-fw fa-tags"></i>
+                <span>Kategori</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/suppliers') }}">
+                <i class="fas fa-fw fa-truck"></i>
+                <span>Supplier</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/transactions') }}">
+                <i class="fas fa-fw fa-receipt"></i>
+                <span>Transaksi</span>
+            </a>
+        </li>
     @endif
 
-    {{-- Pemilik Section --}}
+    {{-- Menu Khusus Pemilik --}}
     @if(Auth::user()->role === 'pemilik')
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Laporan</div>
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Laporan</div>
 
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/laporan/harian') }}">
-            <i class="fas fa-fw fa-calendar-day"></i>
-            <span>Laporan Harian</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/laporan/bulanan') }}">
-            <i class="fas fa-fw fa-calendar-alt"></i>
-            <span>Laporan Bulanan</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/laporan/tahunan') }}">
-            <i class="fas fa-fw fa-calendar"></i>
-            <span>Laporan Tahunan</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/laporan/harian') }}">
+                <i class="fas fa-fw fa-calendar-day"></i>
+                <span>Laporan Harian</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/laporan/bulanan') }}">
+                <i class="fas fa-fw fa-calendar-alt"></i>
+                <span>Laporan Bulanan</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/laporan/tahunan') }}">
+                <i class="fas fa-fw fa-calendar"></i>
+                <span>Laporan Tahunan</span>
+            </a>
+        </li>
     @endif
 
     <hr class="sidebar-divider d-none d-md-block">
