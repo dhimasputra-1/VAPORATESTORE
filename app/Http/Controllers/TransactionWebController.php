@@ -12,11 +12,19 @@ use App\Models\Category;
 
 class TransactionWebController extends Controller
 {
-    public function index()
-    {
-        $transactions = Transaction::all();
-        return view('transactions.index', compact('transactions'));
+    public function index(Request $request)
+{
+    $query = Transaction::orderBy('transaction_date', 'desc');
+
+    if ($request->has('tanggal') && $request->tanggal != '') {
+        $query->whereDate('transaction_date', $request->tanggal);
     }
+
+    $transactions = $query->get();
+
+    return view('transactions.index', compact('transactions'));
+}
+
 
     public function create()
     {
@@ -59,12 +67,14 @@ class TransactionWebController extends Controller
         try {
             // Simpan transaksi utama
             $transaction = Transaction::create([
-                'user_id' => Auth::id(),
-                'transaction_code' => $request->transaction_code,
-                'transaction_date' => $request->transaction_date,
-                'payment_method' => $request->payment_method,
-                'total_price' => 0, // sementara
-            ]);
+            'user_id' => Auth::id(),
+            'transaction_code' => $request->transaction_code,
+            'transaction_date' => $request->transaction_date,
+            'payment_method' => $request->payment_method,
+            'payment_status' => 'pending', // ✅ ditambahkan agar tombol Bayar bisa muncul
+            'total_price' => 0,
+        ]);
+
 
             $total = 0;
 
@@ -79,8 +89,8 @@ class TransactionWebController extends Controller
 
                 // Validasi subtotal dari client, boleh nonaktif kalau yakin
                 $expectedSubtotal = $product->price * $qty;
-                if ($subtotal != $expectedSubtotal) {
-                    throw new \Exception("Subtotal tidak valid untuk produk {$product->product_name}.");
+                if ($qty > $product->stock) {
+                    throw new \Exception("Stok produk <strong>{$product->product_name}</strong> tidak mencukupi. Stok tersisa: {$product->stock}.");
                 }
 
                 // Simpan detail transaksi
@@ -137,7 +147,4 @@ public function paymentProcess(Request $request, $id)
 
     return redirect()->route('transactions.index')->with('success', 'Pembayaran berhasil diselesaikan!');
 }
-
-
-
 }

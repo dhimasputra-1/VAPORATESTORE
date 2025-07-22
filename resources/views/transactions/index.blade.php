@@ -18,6 +18,19 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   @endif
+<form action="{{ route('transactions.index') }}" method="GET" class="mb-3 row g-2">
+  <div class="col-md-3">
+    <input type="date" name="tanggal" id="tanggal" value="{{ request('tanggal') }}" class="form-control" />
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-search"></i> Cari
+    </button>
+    <a href="{{ route('transactions.index') }}" class="btn btn-secondary">
+      <i class="bi bi-x-circle"></i> Reset
+    </a>
+  </div>
+</form>
 
   <div class="card shadow-sm">
     <div class="card-body table-responsive">
@@ -50,10 +63,10 @@
                 <a href="{{ route('transactions.struk', $transaction->id) }}" class="btn btn-sm btn-primary mb-1">
                   <i class="bi bi-receipt"></i> Struk
                 </a>
-                @if ($transaction->payment_status == 'pending')
-                  <a href="{{ route('transactions.payment', $transaction->id) }}" class="btn btn-sm btn-success">
-                    <i class="bi bi-credit-card"></i> Bayar
-                  </a>
+                @if (trim(strtolower($transaction->payment_status ?? '')) == 'pending')
+                    <a href="{{ route('transactions.payment', $transaction->id) }}" class="btn btn-sm btn-success">
+                        <i class="bi bi-credit-card"></i> Bayar
+                    </a>
                 @endif
               </td>
             </tr>
