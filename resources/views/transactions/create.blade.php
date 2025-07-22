@@ -1,5 +1,16 @@
 @extends('layouts.app')
 
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{!! $error !!}</li> {{-- gunakan {!! !!} untuk menampilkan HTML (agar <strong> bisa bekerja) --}}
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
 @section('content')
 <div class="container">
     <h2>Transaksi Baru</h2>
@@ -56,8 +67,9 @@
                             @foreach($products as $product)
                                 <option value="{{ $product->id }}" 
                                     data-category="{{ $product->category_id }}" 
-                                    data-price="{{ $product->price }}">
-                                    {{ $product->product_name }} - Rp {{ number_format($product->price, 0, ',', '.') }}
+                                    data-price="{{ $product->price }}"
+                                    data-stock="{{ $product->stock }}">
+                                    {{ $product->product_name }} - Rp {{ number_format($product->price, 0, ',', '.') }} (Stok: {{ $product->stock }})
                                 </option>
                             @endforeach
                         </select>
@@ -85,6 +97,7 @@
 
         <button type="submit" class="btn btn-primary">Proses Transaksi</button>
     </form>
+<div id="stockAlertContainer"></div>
 </div>
 @endsection
 
@@ -114,12 +127,32 @@ function updateTotal() {
 
 function bindRowEvents(row) {
     row.find('.qtyInput').on('input', function () {
+        let qty = parseInt($(this).val()) || 0;
+        let stock = parseInt(row.find('.selectProduct option:selected').data('stock')) || 0;
+
+        if (qty > stock) {
+            alert("Stok tidak mencukupi.");
+            $(this).val(stock); // paksa max sesuai stok
+            qty = stock;
+        }
+
         updateSubtotal(row);
     });
+
     row.find('.selectProduct').on('change', function () {
+        let stock = parseInt($(this).find('option:selected').data('stock')) || 0;
+        let qtyInput = row.find('.qtyInput');
+        let qty = parseInt(qtyInput.val()) || 0;
+
+        if (qty > stock) {
+            alert("Stok tidak mencukupi.");
+            qtyInput.val(stock);
+        }
+
         updateSubtotal(row);
     });
 }
+
 
 $(document).ready(function () {
     bindRowEvents($('#productRows tr:first'));
@@ -176,5 +209,25 @@ $(document).ready(function () {
         });
     });
 });
+</script>
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        let isValid = true;
+
+        document.querySelectorAll('.quantity-input').forEach((qtyInput) => {
+            const qty = parseInt(qtyInput.value);
+            const maxStock = parseInt(qtyInput.dataset.stock);
+            const name = qtyInput.dataset.name;
+
+            if (qty > maxStock) {
+                alert(`Stok tidak cukup untuk produk "${name}". Maksimal hanya ${maxStock}.`);
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
 </script>
 @endsection
