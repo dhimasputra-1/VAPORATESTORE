@@ -10,7 +10,8 @@ use App\Http\Controllers\Api\{
     TransactionController,
     TransactionDetailController,
     UserController,
-    PemilikDashboardApiController
+    PemilikDashboardApiController,
+    KasirDashboardApiController
 };
 
 // ======================
@@ -21,25 +22,33 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // ======================
-// 🔐 Protected Routes
+// 🔐 Protected Routes (Login Required)
 // ======================
 Route::middleware('auth:sanctum')->group(function () {
 
-    // 🔐 Auth
+    // 👤 Auth & User Info
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::get('/user', fn(Request $request) => $request->user());
 
-    // 📊 Dashboard Pemilik
-    Route::get('/pemilik-dashboard', [PemilikDashboardApiController::class, 'index']);
+    // 📊 Dashboard Pemilik & Laporan
+    Route::prefix('pemilik')->group(function () {
+        Route::get('/dashboard', [PemilikDashboardApiController::class, 'index']);
+        Route::get('/laporan-harian', [PemilikDashboardApiController::class, 'laporanHarian']);
+        Route::get('/laporan-bulanan', [PemilikDashboardApiController::class, 'laporanBulanan']);
+        Route::get('/laporan-tahunan', [PemilikDashboardApiController::class, 'laporanTahunan']);
+    });
+
+    // 📊 Dashboard Kasir
+    Route::get('/kasir-dashboard', [KasirDashboardApiController::class, 'index']);
 
     // 📂 Master Data
     Route::apiResource('/categories', CategoryController::class);
     Route::apiResource('/suppliers', SupplierController::class);
     Route::apiResource('/products', ProductController::class);
-    Route::apiResource('/users', UserController::class); // jika diperlukan oleh admin
+    Route::apiResource('/users', UserController::class); // bisa digunakan oleh admin
 
-    // 💰 Transaksi
+    // 💰 Transaksi & Detail Transaksi
     Route::apiResource('/transactions', TransactionController::class);
     Route::apiResource('/transaction-details', TransactionDetailController::class);
 });

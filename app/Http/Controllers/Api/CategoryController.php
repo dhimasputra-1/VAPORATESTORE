@@ -9,9 +9,15 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function index()
-    {
-        return Category::all();
-    }
+{
+    $categories = Category::all();
+
+    return response()->json([
+        'success' => true,
+        'data' => $categories
+    ]);
+}
+
 
     public function store(Request $request)
     {

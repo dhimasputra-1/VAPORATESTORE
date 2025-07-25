@@ -12,8 +12,17 @@ class ProductController extends Controller
     // GET /api/products
     public function index()
     {
-        return response()->json(Product::with(['category', 'supplier'])->get());
+        $products = Product::with(['category', 'supplier'])->get();
+
+        // tambahkan image_url
+        $products->map(function ($product) {
+            $product->image_url = $product->image_url; // dari accessor
+            return $product;
+        });
+
+        return response()->json($products);
     }
+
 
     // POST /api/products
     public function store(Request $request)
