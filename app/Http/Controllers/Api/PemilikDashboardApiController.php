@@ -62,4 +62,49 @@ class PemilikDashboardApiController extends Controller
             'data_penjualan_per_bulan' => $dataPenjualan
         ]);
     }
+
+    public function laporanHarian()
+{
+    $data = Transaction::select(
+        DB::raw('DATE(transaction_date) as date'),
+        DB::raw('SUM(total_price) as total_sales'),
+        DB::raw('COUNT(*) as total_transactions')
+    )
+    ->whereYear('transaction_date', now()->year)
+    ->groupBy(DB::raw('DATE(transaction_date)'))
+    ->orderByDesc('date')
+    ->get();
+
+    return response()->json(['data' => $data]);
+}
+
+public function laporanBulanan()
+{
+    $data = Transaction::select(
+        DB::raw('MONTH(transaction_date) as date'),
+        DB::raw('SUM(total_price) as total_sales'),
+        DB::raw('COUNT(*) as total_transactions')
+    )
+    ->whereYear('transaction_date', now()->year)
+    ->groupBy(DB::raw('MONTH(transaction_date)'))
+    ->orderByDesc('date')
+    ->get();
+
+    return response()->json(['data' => $data]);
+}
+
+public function laporanTahunan()
+{
+    $data = Transaction::select(
+        DB::raw('YEAR(transaction_date) as date'),
+        DB::raw('SUM(total_price) as total_sales'),
+        DB::raw('COUNT(*) as total_transactions')
+    )
+    ->groupBy(DB::raw('YEAR(transaction_date)'))
+    ->orderByDesc('date')
+    ->get();
+
+    return response()->json(['data' => $data]);
+}
+
 }

@@ -19,7 +19,12 @@ class TransactionController extends Controller
             'details.product.supplier'
         ])->get();
 
-        return response()->json($transactions);
+        return response()->json([
+    'status' => 'success',
+    'message' => 'Daftar transaksi berhasil diambil.',
+    'data' => $transactions
+]);
+
     }
 
     // ➕ Simpan transaksi baru (transaction_code otomatis)
