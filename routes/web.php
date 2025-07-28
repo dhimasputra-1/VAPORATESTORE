@@ -58,7 +58,8 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 */
 Route::middleware(['auth', 'role:pemilik'])->group(function () {
     Route::get('/pemilik/dashboard', [PemilikDashboardController::class, 'index'])->name('pemilik.dashboard');
-
+    Route::get('/register', [UserController::class, 'create'])->name('register');
+    Route::post('/register', [UserController::class, 'store']);
     Route::get('/laporan', [LaporanWebController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/harian', [LaporanWebController::class, 'harian'])->name('laporan.harian');
     Route::get('/laporan/harian/cetak', [LaporanWebController::class, 'cetakHarian'])->name('laporan.harian.cetak');
@@ -66,7 +67,7 @@ Route::middleware(['auth', 'role:pemilik'])->group(function () {
     Route::get('/laporan/bulanan/cetak', [LaporanWebController::class, 'cetakBulanan'])->name('laporan.bulanan.cetak');
     Route::get('/laporan/tahunan', [LaporanWebController::class, 'tahunan'])->name('laporan.tahunan');
     Route::get('/laporan/tahunan/cetak', [LaporanWebController::class, 'cetakTahunan'])->name('laporan.tahunan.cetak');
-
+    Route::resource('users', UserController::class);
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
 });
 

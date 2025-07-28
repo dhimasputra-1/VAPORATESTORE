@@ -84,6 +84,16 @@
                 <span>Laporan Tahunan</span>
             </a>
         </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Manajemen</div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/users') }}">
+                <i class="fas fa-fw fa-users-cog"></i>
+                <span>User Management</span>
+            </a>
+        </li>
     @endif
 
     <hr class="sidebar-divider d-none d-md-block">

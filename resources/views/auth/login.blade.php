@@ -29,10 +29,7 @@
           <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
 
-      </div>
-      <div class="card-footer text-center">
-        <small>Belum punya akun? <a href="/register">Tambah User Baru</a></small>
-      </div>
+      </div>      
     </div>
   </div>
 </div>
