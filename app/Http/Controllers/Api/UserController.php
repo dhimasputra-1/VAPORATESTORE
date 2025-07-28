@@ -33,12 +33,24 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $user->update($request->only(['name', 'email']));
-        return $user;
-    }
+   public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'name'  => 'required',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'role'  => 'required',
+    ]);
+
+    $user->update($request->only(['name', 'email', 'role']));
+
+    return response()->json([
+        'message' => 'User updated successfully',
+        'user' => $user
+    ]);
+}
+
 
     public function destroy($id)
     {
